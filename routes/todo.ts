@@ -1,19 +1,51 @@
-import { Router } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import { Todo } from "../models/todo";
 const todosRouter = Router();
-const todos: Array<Todo> = [{ id: "1", text: "first task" }];
+let todos: Array<Todo> = [{ id: "1", text: "first task" }];
 
-todosRouter.get("/", (req, res, next) => {
+todosRouter.get("/todos", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({ todos: todos });
 });
 
-todosRouter.post("/", (req, res, next) => {
+todosRouter.post("/todo", (req: Request, res: Response, next: NextFunction) => {
   const newTodo = {
     id: new Date().toISOString(),
     text: req.body.text,
   };
   todos.push(newTodo);
-  res.status(200).json({ todos: todos });
+  res.status(201).json({ message: "Added todo", newTodo, todos: todos });
+});
+
+todosRouter.put("/todo/:todoId", (req: any, res: any) => {
+  const todoId = req.params.todoId;
+  const todoIndex = todos.findIndex((t) => {
+    t.id === todoId;
+  });
+  if (todoIndex >= 0) {
+    todos[todoIndex].text = req.body.text;
+    return res.status(201).json({
+      message: "Updated todo",
+      updatedTodo: todos[todoIndex],
+    });
+  }
+  res.status(404).json({ message: "error" });
+});
+
+todosRouter.delete("/todo/:todoId", (req: any, res: any) => {
+  const todoId = req.params.todoId;
+  const todoIndex = todos.findIndex((t) => {
+    t.id === todoId;
+  });
+  if (todoIndex >= 0) {
+    todos = todos.filter((t) => {
+      t.id !== todoId;
+    });
+    return res.status(201).json({
+      message: "Deleted todo",
+      deletedTodo: todos[todoIndex],
+    });
+  }
+  res.status(404).json({ message: "error" });
 });
 
 export default todosRouter;
