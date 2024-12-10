@@ -9,6 +9,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/node": "^22.10.1",
     "express": "^4.21.2"
   }
 }
