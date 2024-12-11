@@ -8,9 +8,13 @@ todosRouter.get("/todos", (req: Request, res: Response, next: NextFunction) => {
 });
 
 todosRouter.post("/todo", (req: Request, res: Response, next: NextFunction) => {
-  const newTodo = {
+  const todoText: string = req.body.text;
+  if (!todoText) {
+    res.status(404).json({ message: "Todo text not found" });
+  }
+  const newTodo: Todo = {
     id: new Date().toISOString(),
-    text: req.body.text,
+    text: todoText,
   };
   todos.push(newTodo);
   res.status(201).json({ message: "Added todo", newTodo, todos: todos });
